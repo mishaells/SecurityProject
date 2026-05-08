@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+<div class="card">
+    <h2>📝 Register</h2>
+
+    <!-- PASSWORD HASHING DEMO EXPLANATION -->
+    <div class="info-box warning">
+        <h4>⚠️ Password Storage Demo</h4>
+        <p><strong>Vulnerable mode:</strong> Password stored as MD5 hash — fast and crackable.</p>
+        <p><strong>Secure mode:</strong> Password stored as bcrypt hash — slow, salted, secure.</p>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Username:</label>
+            <input type="text" name="username" placeholder="Choose a username" required>
+        </div>
+
+        <div class="form-group">
+            <label>Password:</label>
+            <input type="password" name="password" placeholder="Choose a password" required>
+        </div>
+
+        <!-- Mode selector to toggle between vulnerable and secure -->
+        <div class="form-group">
+            <label>Mode (for demo purposes):</label>
+            <select name="mode">
+                <option value="secure">✅ Secure (bcrypt hashing)</option>
+                <option value="vulnerable">⚠️ Vulnerable (MD5 hashing)</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn">Register</button>
+    </form>
+
+    <p class="text-center">Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+</div>
+{% endblock %}

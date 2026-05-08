@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+
+<!-- USER PROFILE SECTION -->
+<div class="card">
+    <h2>👤 Dashboard</h2>
+    <div class="profile-info">
+        <p><strong>Username:</strong> {{ session.username }}</p>
+        <p><strong>Role:</strong> {{ session.role }}</p>
+        <p><strong>Status:</strong> Logged In</p>
+    </div>
+
+    {% if session.role == 'admin' %}
+        <a href="{{ url_for('admin') }}" class="btn btn-admin">Go to Admin Panel</a>
+    {% endif %}
+</div>
+
+<!-- XSS DEMO SECTION -->
+<div class="card">
+    <h2>Comments Section</h2>
+
+    <div class="info-box warning">
+        <h4>⚠️ XSS Demo</h4>
+        <p><strong>Vulnerable mode:</strong> Try typing: <code>&lt;script&gt;alert('XSS Attack!')&lt;/script&gt;</code></p>
+        <p><strong>Secure mode:</strong> bleach.clean() strips the script — it shows as plain text.</p>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Add a Comment:</label>
+            <textarea name="comment" placeholder="Type your comment here..." rows="3"></textarea>
+        </div>
+
+        <div class="form-group">
+            <label>Mode (for demo purposes):</label>
+            <select name="mode">
+                <option value="secure"> Secure (sanitized with bleach)</option>
+                <option value="vulnerable">⚠️ Vulnerable (raw HTML rendered)</option>
+            </select>
+        </div>
+
+        <button type="submit" class="btn">Post Comment</button>
+    </form>
+
+    <!-- 
+    COMMENTS DISPLAY
+    VULNERABLE: comment content with |safe filter renders HTML as code
+    SECURE:     comment content without |safe escapes HTML to plain text
+    
+    We show both so you can see the difference clearly
+    -->
+    <div class="comments-section">
+        <h3>All Comments:</h3>
+        {% if comments %}
+            {% for comment in comments %}
+            <div class="comment">
+                <strong>{{ comment['username'] }}:</strong>
+
+                {% if comment['mode'] == 'vulnerable' %}
+    <!-- VULNERABLE rendering - renders HTML tags as real HTML -->
+    <div class="vulnerable-render">
+        <small>⚠️ Vulnerable render:</small><br>
+        {{ comment['content'] | safe }}
+    </div>
+{% else %}
+    <!-- SECURE rendering - escapes HTML tags to plain text -->
+    <div class="secure-render">
+        <small>✅ Secure render:</small><br>
+        {{ comment['content'] }}
+    </div>
+{% endif %}
+            </div>
+            {% endfor %}
+        {% else %}
+            <p>No comments yet. Be the first to comment!</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
